@@ -53,6 +53,25 @@ function Create(props){
     </form>
   </article>
 }
+function Update(props){
+  const [title, setTitle] = useState(props.title);
+  const [body, setBody] = useState(props.body);
+  return <article>
+    <h2>Update</h2>
+      <form onSubmit={(e)=>{
+          e.preventDefault();
+          props.onUpdate(title,body);
+        }}>      
+        <p><input type="text" name="title" onChange={(e)=>{
+          setTitle(e.target.value);
+        }} value={title}/></p>
+        <p><input type="text" name="body" onChange={(e)=>{
+          setBody(e.target.value);
+        }} value={body}/></p>
+        <p><input type="submit" value="update"/></p>
+      </form>
+  </article>
+}
 function App() {
   // const _mode =useState('Welcome');
   // const mode = _mode[0];
@@ -66,8 +85,15 @@ function App() {
     {id : 3, title : "js", body : 'js is...'},    
   ])
   let content = null;
+  let create = null;
+  let update = null;
+  let itemDelete = null;
   if(mode === 'Welcome'){
     content = <Article  title="Welcome" body="Hello, WEB" />
+    create = <li><a href="/create" onClick={(event)=>{
+      event.preventDefault();
+      setMode('CREATE');
+    }}>Create</a></li>
   }else if(mode === 'READ'){
     let title = null;
     let body = null;
@@ -79,6 +105,21 @@ function App() {
       }
     }
     content = <Article  title={title} body={body} />
+    
+    
+    
+    update = <li><a href={'/update' + id} onClick={(event)=>{
+      event.preventDefault();
+      console.log(event.target)
+      setMode('UPDATE');
+    }}>Update</a></li>
+
+    itemDelete = <li><button onClick={(event)=>{
+      event.preventDefault();
+      console.log(id)
+      setTopics(topics.filter(t => t.id !== id));
+      setMode('Welcome');
+    }}>Delete</button></li>
   }else if(mode === 'CREATE'){
     content = <Create onCreate={(_title,_body)=>{
       const newTopic = {id:nextId, title:_title, body:_body};
@@ -90,6 +131,29 @@ function App() {
       setMode('READ');
       setId(nextId);
       setNextId(nextId + 1);
+    }}/>
+  }else if(mode === 'UPDATE'){
+    let title = null;
+    let body = null;
+    for(let i =0; i < topics.length; i++){
+      if(topics[i].id === id){
+        title = topics[i].title;
+        body = topics[i].body;        
+        break;
+      }
+    }
+    content = <Update title={title} body={body} onUpdate={(_title,_body)=>{      
+      const newTopics = [...topics];
+      const newTopic = {id:id, title:_title, body:_body};
+      for(let i =0; i < newTopics.length; i++){
+        if(newTopics[i].id === id){
+          newTopics[i] = newTopic;
+          console.log(newTopics[i]);
+          break;
+        }
+      }
+      setTopics(newTopics);
+      setMode('READ');
     }}/>
   }
 
@@ -103,12 +167,11 @@ function App() {
         setId(id);
       }}/>
       {content}
-      <a href="/create" onClick={(event)=>{
-        event.preventDefault();
-        setMode('CREATE');
-      }}>Create</a>
-
-      
+      <ul><h2>Control</h2>
+      {create}
+      {update}
+      {itemDelete}
+      </ul>
     </div>
   );
 }
