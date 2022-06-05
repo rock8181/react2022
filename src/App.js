@@ -1,7 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 import {useState} from 'react';
-
+import MuiTestApp from './compnents/MuiTest';
 function Headers(props){
   console.log('props',props, props.title);
   return <header>
@@ -104,9 +104,7 @@ function App() {
         break;
       }
     }
-    content = <Article  title={title} body={body} />
-    
-    
+    content = <Article  title={title} body={body} />   
     
     update = <li><a href={'/update' + id} onClick={(event)=>{
       event.preventDefault();
@@ -120,6 +118,7 @@ function App() {
       setTopics(topics.filter(t => t.id !== id));
       setMode('Welcome');
     }}>Delete</button></li>
+    
   }else if(mode === 'CREATE'){
     content = <Create onCreate={(_title,_body)=>{
       const newTopic = {id:nextId, title:_title, body:_body};
@@ -172,6 +171,7 @@ function App() {
       {update}
       {itemDelete}
       </ul>
+      <MuiTestApp/>
     </div>
   );
 }
